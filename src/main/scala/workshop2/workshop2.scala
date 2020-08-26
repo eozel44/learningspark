@@ -3,7 +3,7 @@ package workshop2
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{col, count, desc}
 
-/** *
+/***
  * Transformations, Actions, and Lazy Evaluation
  *
  * Spark operations on distributed data can be classified into two types: transformations and actions.
@@ -47,7 +47,6 @@ import org.apache.spark.sql.functions.{col, count, desc}
  * other partitions to compute the final aggregation.
  *
  */
-
 
 object workshop2 {
 
