@@ -1,38 +1,9 @@
-package mnmcount
+package workshop2
 
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions._
+import org.apache.spark.sql.functions.{col, count, desc}
 
-/***
- * Spark Jobs
- * The driver converts your Spark application into one or more Spark jobs. It then transforms each job into a DAG.
- * This, in essence, is Spark’s execution plan, where each node within a DAG could be a single or multiple Spark stages.
- *
- * A Job is a sequence of Stages, triggered by an Action such as; count(), foreachRdd(), collect(), read() or write().
- *
- */
-
-/***
- * Spark Stages
- * As part of the DAG nodes, stages are created based on what operations can be performed serially or in parallel.
- * Not all Spark operations can happen in a single stage, so they may be divided into multiple stages.
- * Often stages are delineated on the operator’s computation boundaries, where they dictate data transfer among Spark executors.
- *
- * A Stage is a sequence of Tasks that can all be run together, in parallel, without a shuffle.
- */
-
-/***
- * Spark Tasks
- * Each stage is comprised of Spark tasks (a unit of execution), which are then federated across each Spark executor;
- * each task maps to a single core and works on a single partition of data.
- * As such, an executor with 16 cores can have 16 or more tasks working on 16 or more partitions in parallel,
- * making the execution of Spark’s tasks exceedingly parallel!
- *
- * A Task is a single operation (.map or .filter) applied to a single Partition.
- * Each Task is executed as a single thread in an Executor!
- */
-
-/***
+/** *
  * Transformations, Actions, and Lazy Evaluation
  *
  * Spark operations on distributed data can be classified into two types: transformations and actions.
@@ -78,7 +49,7 @@ import org.apache.spark.sql.functions._
  */
 
 
-object mnmcount {
+object workshop2 {
 
   def main(args: Array[String]) {
     val spark = SparkSession
@@ -88,7 +59,7 @@ object mnmcount {
       .getOrCreate()
 
     // get the mnm data set file name
-    val mnmFile =s"/home/eren/bigdata/cases/workshop/learningspark/src/main/resources/mnmcount.csv"
+    val mnmFile = s"/home/eren/bigdata/cases/workshop/learningspark/src/main/resources/mnmcount.csv"
     // read the file into a Spark DataFrame
     val mnmDF = spark.read.format("csv").option("header", "true").option("inferSchema", "true").load(mnmFile)
     // display DataFrame
