@@ -89,6 +89,8 @@ object workshop5 {
     tables.show()
     columns.show()
 
+    spark.stop()
+
   }
 
 }
