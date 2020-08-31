@@ -53,7 +53,7 @@ object workshop4 {
 
     val spark = SparkSession
       .builder
-      .appName("workshop3")
+      .appName("workshop4")
       .master("local[2]")
       .getOrCreate()
 
