@@ -41,6 +41,61 @@ import org.apache.spark.sql.SparkSession
  *
  */
 
+/***
+ * Dataset Encoders
+ * Encoders convert data in off-heap memory from Spark’s internal Tungsten format to JVM Java objects.
+ * In other words, they serialize and deserialize Dataset objects from Spark’s internal format to JVM objects,
+ * including primitive data types. For example, an Encoder[T] will convert from Spark’s internal Tungsten format to Dataset[T].
+ *
+ * Spark has built-in support for automatically generating encoders for primitive types(e.g., string, integer, long),
+ * Scala case classes, and JavaBeans. Compared to Java and Kryo serialization and deserialization,
+ * Spark encoders are significantly faster.
+ *
+ */
+
+/***
+ * Memory management dataset & dataframes
+ *
+ * • Spark 1.0 used RDD-based Java objects for memory storage, serialization, and
+ *   deserialization, which was expensive in terms of resources and slow. Also, storage
+ *   was allocated on the Java heap, so you were at the mercy of the JVM’s garbage
+ *   collection (GC) for large data sets.
+ *
+ * • Spark 1.x introduced Project Tungsten. One of its prominent features was a new
+ *   internal row-based format to lay out Datasets and DataFrames in off-heap memory,
+ *   using offsets and pointers. Spark uses an efficient mechanism called encoders
+ *   to serialize and deserialize between the JVM and its internal Tungsten format.
+ *   Allocating memory off-heap means that Spark is less encumbered by GC.
+ *
+ * • Spark 2.x introduced the second-generation Tungsten engine, featuring whole-
+ *   stage code generation and vectorized column-based memory layout. Built on
+ *   ideas and techniques from modern compilers, this new version also capitalized
+ *   on modern CPU and cache architectures for fast parallel data access with the
+ *   “single instruction, multiple data” (SIMD) approach.
+ *
+ *
+ * Costs of Using Datasets
+ * In “DataFrames Versus Datasets”, we outlined some of the benefits of using Datasets—but these benefits come at a cost.
+ * As noted when Datasets are passed to higher-order functions such as filter(), map(), or flatMap()
+ * that take lambdas and functional arguments, there is a cost associated
+ * with deserializing from Spark’s internal Tungsten format into the JVM object.
+ * Compared to other serializers used before encoders were introduced in Spark, this
+ * cost is minor and tolerable. However, over larger data sets and many queries, this cost
+ * accrues and can affect performance.
+ *
+ * One strategy to mitigate excessive serialization and deserialization is to use DSL expressions in your queries and
+ * avoid excessive use of lambdas as anonymous functions as arguments to higher-order functions.
+ * Because lambdas are anonymous and opaque to the Catalyst optimizer until runtime,
+ * when you use them it cannot efficiently discern what you’re doing (you’re not telling Spark what to do) and
+ * thus cannot optimize your queries.
+ *
+ * The second strategy is to chain your queries together in such a way that serialization
+ * and deserialization is minimized. Chaining queries together is a common practice in
+ * Spark. (means that use only dsl or anonymous in query chain)
+ *
+ */
+
+
 case class DeviceIoTData (battery_level: Long, c02_level: Long,
                           cca2: String, cca3: String, cn: String, device_id: Long,
                           device_name: String, humidity: Long, ip: String, latitude: Double,
