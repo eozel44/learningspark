@@ -37,7 +37,6 @@ import org.apache.spark.sql.SparkSession
  *
  * */
 
-
 object workshop5 {
 
   def main(args: Array[String]): Unit = {
@@ -80,7 +79,7 @@ object workshop5 {
                          FROM us_delay_flights_tbl
                          ORDER BY origin, delay DESC""").show(10)
 
-    // In Scala/Python
+    // In Scala
     val databases = spark.catalog.listDatabases()
     val tables = spark.catalog.listTables()
     val columns = spark.catalog.listColumns("us_delay_flights_tbl")
